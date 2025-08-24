@@ -8,12 +8,16 @@ const UsernameQuerySchema = z.object({
 });
 
 export async function GET(request: Request) {
+  // console.log( "method is ", request );
+  // console.log( "method is ", request.headers.get('host') );
   await dbConnect();
 
   try {
+    //http://localhost:3000/api/check-username-unique?username=ahanaf&hello=taaa
     const { searchParams } = new URL(request.url);
     const queryParams = {
       username: searchParams.get('username'),
+      //hellos: searchParams.get('hello'),
     };
 
     const result = UsernameQuerySchema.safeParse(queryParams);
@@ -33,6 +37,10 @@ export async function GET(request: Request) {
     }
 
     const { username } = result.data;
+
+    // console.log('\n\n\n\n\n\n\n\n\n\n');
+    // console.log(result)
+    // console.log(queryParams)
 
     const existingVerifiedUser = await UserModel.findOne({
       username,
