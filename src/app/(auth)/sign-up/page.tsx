@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDebounceCallback  } from 'usehooks-ts';
+import { useDebounceValue  } from 'usehooks-ts';
 import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ export default function SignUpForm() {
   const [usernameMessage, setUsernameMessage] = useState('');
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const debouncedUsername = useDebounceCallback (setUsername, 300);
+  const debouncedUsername = useDebounceValue(username, 300)[0];
 
   const router = useRouter();
 
@@ -47,9 +47,12 @@ export default function SignUpForm() {
         setIsCheckingUsername(true);
         setUsernameMessage(''); // Reset message
         try {
+          //console.log( "debounce --0--", debouncedUsername);
           const response = await axios.get<ApiResponse>(
             `/api/check-username-unique?username=${debouncedUsername}`
           );
+
+         // console.log('hola amigos - ',response.data);
           setUsernameMessage(response.data.message);
         } catch (error) {
           const axiosError = error as AxiosError<ApiResponse>;
