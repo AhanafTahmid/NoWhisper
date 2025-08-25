@@ -4,8 +4,8 @@ import { MessageCard } from '@/components/MessageCard';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/components/ui/use-toast';
-import { Message } from '@/model/User';
+import { toast } from 'sonner';
+import { Messages } from '@/model/User';
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
@@ -14,14 +14,13 @@ import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AcceptMessageSchema } from '@/schemas/acceptMessageSchema';
+import { acceptMessageSchema } from '@/schemas/acceptMessageSchema';
 
 function UserDashboard() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Messages[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
 
-  const { toast } = useToast();
 
   const handleDeleteMessage = (messageId: string) => {
     setMessages(messages.filter((message) => message._id !== messageId));
@@ -30,7 +29,7 @@ function UserDashboard() {
   const { data: session } = useSession();
 
   const form = useForm({
-    resolver: zodResolver(AcceptMessageSchema),
+    resolver: zodResolver(acceptMessageSchema),
   });
 
   const { register, watch, setValue } = form;
@@ -43,13 +42,7 @@ function UserDashboard() {
       setValue('acceptMessages', response.data.isAcceptingMessages);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast({
-        title: 'Error',
-        description:
-          axiosError.response?.data.message ??
-          'Failed to fetch message settings',
-        variant: 'destructive',
-      });
+      toast.error(axiosError.response?.data.message ?? 'Failed to fetch message settings');
     } finally {
       setIsSwitchLoading(false);
     }
@@ -63,19 +56,12 @@ function UserDashboard() {
         const response = await axios.get<ApiResponse>('/api/get-messages');
         setMessages(response.data.messages || []);
         if (refresh) {
-          toast({
-            title: 'Refreshed Messages',
-            description: 'Showing latest messages',
-          });
+          toast.message('Refreshed Messages');
         }
       } catch (error) {
         const axiosError = error as AxiosError<ApiResponse>;
-        toast({
-          title: 'Error',
-          description:
-            axiosError.response?.data.message ?? 'Failed to fetch messages',
-          variant: 'destructive',
-        });
+        toast.error(axiosError.response?.data.message ?? 'Failed to fetch messages');
+
       } finally {
         setIsLoading(false);
         setIsSwitchLoading(false);
@@ -100,19 +86,11 @@ function UserDashboard() {
         acceptMessages: !acceptMessages,
       });
       setValue('acceptMessages', !acceptMessages);
-      toast({
-        title: response.data.message,
-        variant: 'default',
-      });
+      toast.success(response.data.message);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast({
-        title: 'Error',
-        description:
-          axiosError.response?.data.message ??
-          'Failed to update message settings',
-        variant: 'destructive',
-      });
+      toast.error( axiosError.response?.data.message ??
+          'Failed to update message settings');
     }
   };
 
@@ -127,10 +105,7 @@ function UserDashboard() {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
-    toast({
-      title: 'URL Copied!',
-      description: 'Profile URL has been copied to clipboard.',
-    });
+    toast.message('Profile URL has been copied to clipboard.');
   };
 
   return (
@@ -181,7 +156,7 @@ function UserDashboard() {
         {messages.length > 0 ? (
           messages.map((message, index) => (
             <MessageCard
-              key={message._id}
+              key={message._id as string}
               message={message}
               onMessageDelete={handleDeleteMessage}
             />
