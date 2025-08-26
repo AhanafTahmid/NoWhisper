@@ -10,6 +10,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/react": "^2.0.24",
     "@google/genai": "^1.15.0",
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -19,6 +20,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@react-email/components": "^0.5.1",
     "@react-email/render": "^1.2.1",
+    "ai": "^5.0.24",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",

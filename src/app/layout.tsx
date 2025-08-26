@@ -21,7 +21,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <body className={inter.className}>
           {children}
         </body>
-      </AuthProvide>
+        </AuthProvide>
     </html>
   );
 }
