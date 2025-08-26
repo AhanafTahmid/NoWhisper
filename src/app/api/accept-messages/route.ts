@@ -3,6 +3,7 @@ import { authOptions } from '../auth/[...nextauth]/options';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/model/User';
 import { User } from 'next-auth';
+// import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   // Connect to the database
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
 }
 
 
-export async function GET(request: Request) {
+export async function GET() {
   // Connect to the database
   await dbConnect();
 

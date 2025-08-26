@@ -61,7 +61,7 @@ export default function SignInForm() {
     }
 
     if (result?.url) {
-      console.log('url eta - ',result.url);
+      //console.log('url eta - ',result.url);
       router.push('/dashboard');
     }
   };
